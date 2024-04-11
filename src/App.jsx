@@ -54,7 +54,6 @@ const List = ({ list }) => {
 };
 
 const Item = ({ title, url, author, num_comments, points }) => {
-const Item = ({ title, url, author, num_comments, points }) => {
   return (
     <li>
       <span>
