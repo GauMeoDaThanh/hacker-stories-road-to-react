@@ -21,10 +21,16 @@ const App = () => {
       objectID: 1,
     },
   ];
+
+  // Create a function and pass to child props for callback handlers
+  const handleSearch = (event) => {
+    console.log(event.target.value);
+  };
+
   return (
     <div>
       <h1>My Hacker Stories</h1>
-      <Search />
+      <Search onSearch={handleSearch} />
       <hr />
       <List list={stories} />
     </div>
@@ -52,11 +58,12 @@ const Item = (props) => (
   </li>
 );
 
-const Search = () => {
+const Search = (props) => {
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
+    props.onSearch(event);
   };
 
   return (
