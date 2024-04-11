@@ -46,14 +46,14 @@ const App = () => {
 const List = ({ list }) => {
   return (
     <ul>
-      {list.map((item) => (
-        <Item item={item} key={item.objectID} />
+      {list.map(({ objectID, ...item }) => (
+        <Item key={objectID} {...item} />
       ))}
     </ul>
   );
 };
 
-const Item = ({ item: { title, url, author, num_comments, points } }) => {
+const Item = ({ title, url, author, num_comments, points }) => {
   return (
     <li>
       <span>
