@@ -21,7 +21,6 @@ const App = () => {
       objectID: 1,
     },
   ];
-
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -32,13 +31,15 @@ const App = () => {
   );
 };
 
-const List = (props) => (
-  <ul>
-    {props.list.map((item) => (
-      <Item item={item} key={item.objectID} />
-    ))}
-  </ul>
-);
+const List = (props) => {
+  return (
+    <ul>
+      {props.list.map((item) => (
+        <Item item={item} key={item.objectID} />
+      ))}
+    </ul>
+  );
+};
 
 const Item = (props) => (
   <li>
@@ -52,15 +53,20 @@ const Item = (props) => (
 );
 
 const Search = () => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+
   const handleChange = (event) => {
-    console.log(event);
-    console.log(event.target.value);
+    setSearchTerm(event.target.value);
   };
 
   return (
     <div>
       <label htmlFor="search">Search:</label>
       <input type="text" id="search" onChange={handleChange} />
+
+      <p>
+        Searching for <strong>{searchTerm}</strong>
+      </p>
     </div>
   );
 };
