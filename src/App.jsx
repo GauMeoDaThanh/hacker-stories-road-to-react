@@ -3,6 +3,8 @@ import "./App.css";
 import * as React from "react";
 
 const App = () => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+
   const stories = [
     {
       title: "React",
@@ -22,17 +24,21 @@ const App = () => {
     },
   ];
 
-  // Create a function and pass to child props for callback handlers
   const handleSearch = (event) => {
-    console.log(event.target.value);
+    setSearchTerm(event.target.value);
+    // console.log(searchTerm);
   };
+
+  const searchStories = stories.filter((story) =>
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
       <h1>My Hacker Stories</h1>
-      <Search onSearch={handleSearch} />
+      <Search onSearch={handleSearch} searchTerm={setSearchTerm} />
       <hr />
-      <List list={stories} />
+      <List list={searchStories} />
     </div>
   );
 };
@@ -59,21 +65,10 @@ const Item = (props) => (
 );
 
 const Search = (props) => {
-  const [searchTerm, setSearchTerm] = React.useState("");
-
-  const handleChange = (event) => {
-    setSearchTerm(event.target.value);
-    props.onSearch(event);
-  };
-
   return (
     <div>
       <label htmlFor="search">Search:</label>
-      <input type="text" id="search" onChange={handleChange} />
-
-      <p>
-        Searching for <strong>{searchTerm}</strong>
-      </p>
+      <input type="text" id="search" onChange={props.onSearch} />
     </div>
   );
 };
