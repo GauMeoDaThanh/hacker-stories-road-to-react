@@ -47,13 +47,20 @@ const List = ({ list }) => {
   return (
     <ul>
       {list.map((item) => (
-        <Item item={item} key={item.objectID} />
+        <Item
+          key={item.objectID}
+          title={item.title}
+          url={item.url}
+          author={item.author}
+          num_comments={item.num_comments}
+          points={item.points}
+        />
       ))}
     </ul>
   );
 };
 
-const Item = ({ item: { title, url, author, num_comments, points } }) => {
+const Item = ({ title, url, author, num_comments, points }) => {
   return (
     <li>
       <span>
