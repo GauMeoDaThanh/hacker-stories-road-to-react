@@ -3,7 +3,16 @@ import "./App.css";
 import * as React from "react";
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = React.useState("React");
+  const [searchTerm, setSearchTerm] = React.useState(
+    localStorage.getItem("search") ?? "React"
+  );
+
+  // if one of the variables in list changes (2nd parameter), the function will be called
+  // not have the 2nd agrument will run the function for every render
+  // empty 2nd agrument will only call the function once
+  React.useEffect(() => {
+    localStorage.setItem("search", searchTerm);
+  }, [searchTerm]);
 
   const stories = [
     {
@@ -26,7 +35,6 @@ const App = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    // console.log(searchTerm);
   };
 
   const searchStories = stories.filter((story) =>
