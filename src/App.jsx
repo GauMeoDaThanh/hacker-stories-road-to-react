@@ -2,18 +2,18 @@
 import "./App.css";
 import * as React from "react";
 
-const App = () => {
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem("search") ?? "React"
+const useStorageState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) ?? initialState
   );
-
-  // if one of the variables in list changes (2nd parameter), the function will be called
-  // not have the 2nd agrument will run the function for every render
-  // empty 2nd agrument will only call the function once
   React.useEffect(() => {
-    localStorage.setItem("search", searchTerm);
-  }, [searchTerm]);
+    localStorage.setItem(key, value);
+  }, [value, key]);
 
+  return [value, setValue];
+};
+
+const App = () => {
   const stories = [
     {
       title: "React",
@@ -32,6 +32,8 @@ const App = () => {
       objectID: 1,
     },
   ];
+
+  const [searchTerm, setSearchTerm] = useStorageState("search", "React");
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
