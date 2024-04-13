@@ -37,15 +37,13 @@ const App = () => {
     new Promise((resolve) =>
       setTimeout(() => resolve({ data: { storiesDup: stories } }), 2000)
     );
-
-  const [searchTerm, setSearchTerm] = useStorageState("search", "React");
-  const [storiesDup, setStories] = React.useState([]);
-
   React.useEffect(() => {
     getAsyncStories().then((result) => {
       setStories(result.data.storiesDup);
     });
   }, []);
+  const [searchTerm, setSearchTerm] = useStorageState("search", "React");
+  const [storiesDup, setStories] = React.useState([]);
 
   const handlRemoveStories = (item) => {
     setStories(storiesDup.filter((story) => story !== item));
