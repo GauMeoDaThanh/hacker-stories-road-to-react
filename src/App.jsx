@@ -91,6 +91,7 @@ const InputWithLabel = ({
   children,
   isFocused,
 }) => {
+  // imperative approach, not mandatory !!
   const inputRef = React.useRef();
   React.useEffect(() => {
     if (isFocused && inputRef.current) {
@@ -98,6 +99,7 @@ const InputWithLabel = ({
     }
   }, [isFocused]);
 
+  // If using declarative approach, just set the autoFocus = {isFocused}
   return (
     <React.Fragment>
       <label htmlFor={id}>{children}</label> &nbsp;
