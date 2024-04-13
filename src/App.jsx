@@ -34,12 +34,16 @@ const App = () => {
   ];
 
   const [searchTerm, setSearchTerm] = useStorageState("search", "React");
+  const [storiesDup, setStories] = React.useState(stories);
+  const handlRemoveStories = (item) => {
+    setStories(storiesDup.filter((story) => story !== item));
+  };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const searchStories = stories.filter((story) =>
+  const searchStories = storiesDup.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -55,22 +59,22 @@ const App = () => {
         <strong>Search:</strong>
       </InputWithLabel>
       <hr />
-      <List list={searchStories} />
+      <List list={searchStories} onRemoveItem={handlRemoveStories} />
     </div>
   );
 };
 
-const List = ({ list }) => {
+const List = ({ list, onRemoveItem }) => {
   return (
     <ul>
       {list.map((item) => (
-        <Item key={item.objectID} item={item} />
+        <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
       ))}
     </ul>
   );
 };
-
-const Item = ({ item }) => {
+// De xoa :
+const Item = ({ item, onRemoveItem }) => {
   return (
     <li>
       <span>
@@ -79,6 +83,9 @@ const Item = ({ item }) => {
       <span>{item.author}</span>
       <span>{item.num_comments}</span>
       <span>{item.points}</span>
+      <button type="button" onClick={() => onRemoveItem(item)}>
+        Dismiss
+      </button>
     </li>
   );
 };
