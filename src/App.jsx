@@ -4,6 +4,9 @@ import * as React from "react";
 
 const SET_STORIES = "SET_STORIES";
 const REMOVE_STORY = "REMOVE_STORY";
+const STORIES_FETCH_INIT = "STORIES_FETCH_INIT";
+const STORIES_FETCH_SUCCESS = "STORIES_FETCH_SUCCESS";
+const STORIES_FETCH_FAILURE = "STORIES_FETCH_FAILURE";
 
 const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -37,36 +40,57 @@ const App = () => {
   ];
 
   const getAsyncStories = () =>
-    new Promise((resolve) =>
-      setTimeout(() => resolve({ data: { storiesDup: stories } }), 2000)
-    );
+    new Promise((resolve, reject) => setTimeout(reject, 2000));
   const storiesReducer = (state, action) => {
-    if (action.type === SET_STORIES) {
-      return action.payload;
-    } else if (action.type === REMOVE_STORY) {
-      return state.filter(
-        (story) => action.payload.objectID !== story.objectID
-      );
-    } else {
-      throw new Error();
+    switch (action.type) {
+      case STORIES_FETCH_INIT:
+        return {
+          ...state,
+          isLoading: true,
+          isError: false,
+        };
+      case STORIES_FETCH_SUCCESS:
+        return {
+          ...state,
+          isLoading: false,
+          isError: false,
+          data: action.payload,
+        };
+      case STORIES_FETCH_FAILURE:
+        return {
+          ...state,
+          isLoading: false,
+          isError: true,
+        };
+      case REMOVE_STORY:
+        return {
+          ...state,
+          data: state.data.filter(
+            (story) => action.payload.objectID !== story.objectID
+          ),
+        };
+      default:
+        throw new Error();
     }
   };
-  const [storiesDup, dispatchStories] = React.useReducer(storiesReducer, []);
+  const [storiesDup, dispatchStories] = React.useReducer(storiesReducer, {
+    data: [],
+    isLoading: false,
+    isError: false,
+  });
   React.useEffect(() => {
-    setLoading(true);
+    dispatchStories({ type: STORIES_FETCH_INIT });
+
     getAsyncStories()
       .then((result) => {
         dispatchStories({
-          type: SET_STORIES,
+          type: STORIES_FETCH_SUCCESS,
           payload: result.data.storiesDup,
         });
-        setLoading(false);
       })
-      .catch(() => setIsError(true));
+      .catch(() => dispatchStories({ type: STORIES_FETCH_FAILURE }));
   }, []);
   const [searchTerm, setSearchTerm] = useStorageState("search", "React");
-  const [isLoading, setLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
 
   const handlRemoveStories = (item) => {
     dispatchStories({
@@ -79,7 +103,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  const searchStories = storiesDup.filter((story) =>
+  const searchStories = storiesDup.data.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -95,9 +119,9 @@ const App = () => {
         <strong>Search:</strong>
       </InputWithLabel>
       <hr />
-      {isError && <p>Something went wrong...</p>}
+      {storiesDup.isError && <p>Something went wrong...</p>}
 
-      {isLoading ? (
+      {storiesDup.isLoading ? (
         <p>Loading...</p>
       ) : (
         <List list={searchStories} onRemoveItem={handlRemoveStories} />
