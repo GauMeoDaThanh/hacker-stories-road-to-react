@@ -2,6 +2,9 @@
 import "./App.css";
 import * as React from "react";
 
+const SET_STORIES = "SET_STORIES";
+const REMOVE_STORY = "REMOVE_STORY";
+
 const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
     localStorage.getItem(key) ?? initialState
@@ -38,9 +41,9 @@ const App = () => {
       setTimeout(() => resolve({ data: { storiesDup: stories } }), 2000)
     );
   const storiesReducer = (state, action) => {
-    if (action.type === "SET_STORIES") {
+    if (action.type === SET_STORIES) {
       return action.payload;
-    } else if (action.type === "REMOVE_STORY") {
+    } else if (action.type === REMOVE_STORY) {
       return state.filter(
         (story) => action.payload.objectID !== story.objectID
       );
@@ -54,7 +57,7 @@ const App = () => {
     getAsyncStories()
       .then((result) => {
         dispatchStories({
-          type: "SET_STORIES",
+          type: SET_STORIES,
           payload: result.data.storiesDup,
         });
         setLoading(false);
@@ -67,7 +70,7 @@ const App = () => {
 
   const handlRemoveStories = (item) => {
     dispatchStories({
-      type: "REMOVE_STORY",
+      type: REMOVE_STORY,
       payload: item,
     });
   };
