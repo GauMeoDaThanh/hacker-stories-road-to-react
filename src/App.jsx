@@ -20,27 +20,6 @@ const useStorageState = (key, initialState) => {
 };
 
 const App = () => {
-  // const stories = [
-  //   {
-  //     title: "React",
-  //     url: "https://reactjs.org/",
-  //     author: "Jordan Walke",
-  //     num_comments: 3,
-  //     points: 4,
-  //     objectID: 0,
-  //   },
-  //   {
-  //     title: "Redux",
-  //     url: "https://redux.js.org/",
-  //     author: "Dan Abramov, Andrew Clark",
-  //     num_comments: 2,
-  //     points: 5,
-  //     objectID: 1,
-  //   },
-  // ];
-
-  // const getAsyncStories = () =>
-  //   new Promise((resolve, reject) => setTimeout(reject, 2000));
   const storiesReducer = (state, action) => {
     switch (action.type) {
       case STORIES_FETCH_INIT:
@@ -78,9 +57,12 @@ const App = () => {
     isLoading: false,
     isError: false,
   });
+  const [searchTerm, setSearchTerm] = useStorageState("search", "React");
   React.useEffect(() => {
+    if (!searchTerm) return;
+
     dispatchStories({ type: STORIES_FETCH_INIT });
-    fetch(`${API_ENDPOINT}react`)
+    fetch(`${API_ENDPOINT}${searchTerm}`)
       .then((response) => response.json())
       .then((result) => {
         dispatchStories({
@@ -89,8 +71,7 @@ const App = () => {
         });
       })
       .catch(() => dispatchStories({ type: STORIES_FETCH_FAILURE }));
-  }, []);
-  const [searchTerm, setSearchTerm] = useStorageState("search", "React");
+  }, [searchTerm]);
 
   const handlRemoveStories = (item) => {
     dispatchStories({
@@ -102,10 +83,6 @@ const App = () => {
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
-
-  const searchStories = storiesDup.data.filter((story) =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div>
@@ -124,7 +101,7 @@ const App = () => {
       {storiesDup.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={searchStories} onRemoveItem={handlRemoveStories} />
+        <List list={storiesDup.data} onRemoveItem={handlRemoveStories} />
       )}
     </div>
   );
@@ -139,7 +116,6 @@ const List = ({ list, onRemoveItem }) => {
     </ul>
   );
 };
-// De xoa :
 const Item = ({ item, onRemoveItem }) => {
   return (
     <li>
