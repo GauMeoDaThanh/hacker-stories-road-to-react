@@ -38,12 +38,18 @@ const App = () => {
       setTimeout(() => resolve({ data: { storiesDup: stories } }), 2000)
     );
   React.useEffect(() => {
-    getAsyncStories().then((result) => {
-      setStories(result.data.storiesDup);
-    });
+    setLoading(true);
+    getAsyncStories()
+      .then((result) => {
+        setStories(result.data.storiesDup);
+        setLoading(false);
+      })
+      .catch(() => setIsError(true));
   }, []);
   const [searchTerm, setSearchTerm] = useStorageState("search", "React");
+  const [isLoading, setLoading] = React.useState(false);
   const [storiesDup, setStories] = React.useState([]);
+  const [isError, setIsError] = React.useState(false);
 
   const handlRemoveStories = (item) => {
     setStories(storiesDup.filter((story) => story !== item));
@@ -69,7 +75,13 @@ const App = () => {
         <strong>Search:</strong>
       </InputWithLabel>
       <hr />
-      <List list={searchStories} onRemoveItem={handlRemoveStories} />
+      {isError && <p>Something went wrong...</p>}
+
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <List list={searchStories} onRemoveItem={handlRemoveStories} />
+      )}
     </div>
   );
 };
