@@ -2,11 +2,11 @@
 import "./App.css";
 import * as React from "react";
 
-const SET_STORIES = "SET_STORIES";
 const REMOVE_STORY = "REMOVE_STORY";
 const STORIES_FETCH_INIT = "STORIES_FETCH_INIT";
 const STORIES_FETCH_SUCCESS = "STORIES_FETCH_SUCCESS";
 const STORIES_FETCH_FAILURE = "STORIES_FETCH_FAILURE";
+const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
 const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -20,27 +20,27 @@ const useStorageState = (key, initialState) => {
 };
 
 const App = () => {
-  const stories = [
-    {
-      title: "React",
-      url: "https://reactjs.org/",
-      author: "Jordan Walke",
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: "Redux",
-      url: "https://redux.js.org/",
-      author: "Dan Abramov, Andrew Clark",
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-  ];
+  // const stories = [
+  //   {
+  //     title: "React",
+  //     url: "https://reactjs.org/",
+  //     author: "Jordan Walke",
+  //     num_comments: 3,
+  //     points: 4,
+  //     objectID: 0,
+  //   },
+  //   {
+  //     title: "Redux",
+  //     url: "https://redux.js.org/",
+  //     author: "Dan Abramov, Andrew Clark",
+  //     num_comments: 2,
+  //     points: 5,
+  //     objectID: 1,
+  //   },
+  // ];
 
-  const getAsyncStories = () =>
-    new Promise((resolve, reject) => setTimeout(reject, 2000));
+  // const getAsyncStories = () =>
+  //   new Promise((resolve, reject) => setTimeout(reject, 2000));
   const storiesReducer = (state, action) => {
     switch (action.type) {
       case STORIES_FETCH_INIT:
@@ -80,12 +80,12 @@ const App = () => {
   });
   React.useEffect(() => {
     dispatchStories({ type: STORIES_FETCH_INIT });
-
-    getAsyncStories()
+    fetch(`${API_ENDPOINT}react`)
+      .then((response) => response.json())
       .then((result) => {
         dispatchStories({
           type: STORIES_FETCH_SUCCESS,
-          payload: result.data.storiesDup,
+          payload: result.hits,
         });
       })
       .catch(() => dispatchStories({ type: STORIES_FETCH_FAILURE }));
