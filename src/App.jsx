@@ -37,22 +37,39 @@ const App = () => {
     new Promise((resolve) =>
       setTimeout(() => resolve({ data: { storiesDup: stories } }), 2000)
     );
+  const storiesReducer = (state, action) => {
+    if (action.type === "SET_STORIES") {
+      return action.payload;
+    } else if (action.type === "REMOVE_STORY") {
+      return state.filter(
+        (story) => action.payload.objectID !== story.objectID
+      );
+    } else {
+      throw new Error();
+    }
+  };
+  const [storiesDup, dispatchStories] = React.useReducer(storiesReducer, []);
   React.useEffect(() => {
     setLoading(true);
     getAsyncStories()
       .then((result) => {
-        setStories(result.data.storiesDup);
+        dispatchStories({
+          type: "SET_STORIES",
+          payload: result.data.storiesDup,
+        });
         setLoading(false);
       })
       .catch(() => setIsError(true));
   }, []);
   const [searchTerm, setSearchTerm] = useStorageState("search", "React");
   const [isLoading, setLoading] = React.useState(false);
-  const [storiesDup, setStories] = React.useState([]);
   const [isError, setIsError] = React.useState(false);
 
   const handlRemoveStories = (item) => {
-    setStories(storiesDup.filter((story) => story !== item));
+    dispatchStories({
+      type: "REMOVE_STORY",
+      payload: item,
+    });
   };
 
   const handleSearch = (event) => {
