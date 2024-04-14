@@ -58,7 +58,7 @@ const App = () => {
     isError: false,
   });
   const [searchTerm, setSearchTerm] = useStorageState("search", "React");
-  React.useEffect(() => {
+  const handleFetchStories = React.useCallback(() => {
     if (!searchTerm) return;
 
     dispatchStories({ type: STORIES_FETCH_INIT });
@@ -72,7 +72,9 @@ const App = () => {
       })
       .catch(() => dispatchStories({ type: STORIES_FETCH_FAILURE }));
   }, [searchTerm]);
-
+  React.useEffect(() => {
+    handleFetchStories();
+  }, [handleFetchStories]);
   const handlRemoveStories = (item) => {
     dispatchStories({
       type: REMOVE_STORY,
