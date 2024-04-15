@@ -64,6 +64,9 @@ const App = () => {
   const handleFetchStories = React.useCallback(async () => {
     if (!searchTerm) return;
     try {
+      dispatchStories({
+        type: STORIES_FETCH_INIT,
+      });
       const result = await axios.get(url);
       dispatchStories({
         type: STORIES_FETCH_SUCCESS,
@@ -88,24 +91,20 @@ const App = () => {
   const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
   };
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (event) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+
+    event.preventDefault();
   };
 
   return (
     <div>
       <h1>My Hacker Stories</h1>
-      <InputWithLabel
-        onInputChange={handleSearchInput}
-        search={searchTerm}
-        id="search"
-        isFocused
-      >
-        <strong>Search:</strong>
-      </InputWithLabel>
-      <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>
-        submit
-      </button>
+      <SearchForm
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
+        searchTerm={searchTerm}
+      ></SearchForm>
       <hr />
       {storiesDup.isError && <p>Something went wrong...</p>}
 
@@ -173,5 +172,21 @@ const InputWithLabel = ({
     </React.Fragment>
   );
 };
+
+const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => (
+  <form onSubmit={onSearchSubmit}>
+    <InputWithLabel
+      onInputChange={onSearchInput}
+      search={searchTerm}
+      id="search"
+      isFocused
+    >
+      <strong>Search:</strong>
+    </InputWithLabel>
+    <button type="submit" disabled={!searchTerm}>
+      submit
+    </button>
+  </form>
+);
 
 export default App;
